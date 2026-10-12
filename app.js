@@ -12,7 +12,7 @@ function applyPrefs(){document.documentElement.style.setProperty('--fs',LS.get('
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyPrefs);
 function toggleNight(){const night=document.body.className=='night';if(!night&&LS.get('theme','light')!='night')LS.set('dayTheme',LS.get('theme','light')=='auto'?'light':LS.get('theme','light'));LS.set('theme',night?(LS.get('dayTheme','light')):'night');applyPrefs();toast(night?'Day mode':'Night mode')}
 function toast(t){const e=$('#toast');e.textContent=t;e.hidden=false;clearTimeout(e._t);e._t=setTimeout(()=>e.hidden=true,1800)}
-function chrome(title,tab,back,reading){$('#title').textContent=title;$('#back').hidden=!back;document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t==tab));$('#readnav').hidden=!reading;V.scrollTop=0}
+function chrome(title,tab,back,reading){$('#title').textContent=title;$('#back').hidden=!back;window._tab=tab;document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t==tab));$('#readnav').hidden=!reading;V.scrollTop=0}
 function go(h){location.hash=h}
 $('#moon').onclick=toggleNight;
 $('#back').onclick=()=>history.length>1?history.back():go('#/');
@@ -66,7 +66,7 @@ V.addEventListener('touchend',e=>{if($('#readnav').hidden)return;const dx=e.chan
 V.addEventListener('click',e=>{const eg=e.target.closest('.egg');if(eg){e.stopPropagation();return eggCard(eg.dataset.egg)}
   const v=e.target.closest('.v');if(v){if(sp.on)return speakFrom(+v.id.slice(1)-1);verseSheet(v.dataset.r)}});
 function sheet(html){const s=$('#sheet');s.innerHTML=`<div class="panel">${html}</div>`;s.hidden=false;s.onclick=e=>{if(e.target==s)closeSheet()}}
-function closeSheet(){$('#sheet').hidden=true;document.querySelectorAll('.v.sel').forEach(x=>x.classList.remove('sel'))}
+function closeSheet(){$('#sheet').hidden=true;if(window._tab)document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t==window._tab));document.querySelectorAll('.v.sel').forEach(x=>x.classList.remove('sel'))}
 function nice(r){const p=parse(r);return`${bname(p.b)} ${p.c}:${p.v}`}
 function eggCard(r){const e=EGGS[r];sheet(`<div class="vref">${nice(r)}</div><h3>${e.title||'A little surprise'}</h3>${e.photo?`<img src="${e.photo}" alt="">`:''}${e.note?`<p class="msg">${e.note}</p>`:''}<button class="big" onclick="closeSheet()">Close</button>`)}
 function verseSheet(r){const el=document.querySelector(`.v[data-r="${r}"]`);el.classList.add('sel');const hl=LS.get('hl',{}),bm=LS.get('bm',[]),p=parse(r);
@@ -75,7 +75,7 @@ function verseSheet(r){const el=document.querySelector(`.v[data-r="${r}"]`);el.c
   $('#sh').onclick=()=>{hl[r]?delete hl[r]:hl[r]=1;LS.set('hl',hl);el.classList.toggle('hl',!!hl[r]);closeSheet()};
   $('#sb').onclick=()=>{const i=bm.indexOf(r);i<0?bm.unshift(r):bm.splice(i,1);LS.set('bm',bm);toast(i<0?'Saved':'Removed');closeSheet()};
   if(EGGS[r])$('#se').onclick=()=>eggCard(r)}
-function textSheet(){const fs=LS.get('fs',24),th=LS.get('theme','light'),he=LS.get('hideEggs',false);
+function textSheet(){setTimeout(()=>document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t=='text')));const fs=LS.get('fs',24),th=LS.get('theme','light'),he=LS.get('hideEggs',false);
   sheet(`<h3>Text &amp; Display</h3><div class="sect">Text size</div><div class="row"><button id="fm" aria-label="Smaller">A−</button><button disabled style="border:0;font-size:${fs}px">Aa ${fs}</button><button id="fp" aria-label="Larger" style="font-size:26px">A+</button></div>
   <div class="sect">Page color</div><p class="muted" style="margin:-4px 0 10px;font-size:16px">Auto follows your iPhone's dark mode</p><div class="row">${[['light','Light'],['sepia','Sepia'],['night','Night'],['auto','Auto']].map(([t,l])=>`<button data-th="${t}" class="${t==th||(th=='dark'&&t=='night')?'on':''}">${l}</button>`).join('')}</div>
   <div class="sect">Reading aloud speed</div><div class="row">${[[0.75,'Slow'],[0.9,'Gentle'],[1,'Normal'],[1.25,'Quick']].map(([r,l])=>`<button data-rate="${r}" class="${LS.get('rate',0.9)==r?'on':''}">${l}</button>`).join('')}</div>
