@@ -1,4 +1,7 @@
 # Changelog
+## v3.2 — 2026-10-12
+- Play button is now a plain icon in the bar's text color (like Prev/Next), no outline or tint; 56px invisible tap area. Playing shows the pause icon in the soft red accent.
+- SW cache yb-v6.
 ## v3.1 — 2026-10-12
 - Play button restyled to blend into the reading bar: transparent with thin outline in theme color (52px); playing state = pause icon + soft accent tint. Text-style play glyph (no emoji rendering).
 - Text panel: gentle one-time hint (dismiss with "Got it") with the iPhone Settings path when no Enhanced/Premium voice is installed; no popups.
