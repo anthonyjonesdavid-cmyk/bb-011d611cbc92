@@ -1,4 +1,8 @@
 # Changelog
+## v3.4 — 2026-10-12
+- Fix: tab bar no longer covered when the Text panel (or any card) opens. Sheets now sit above the tab bar; A stays gold while open; tapping A again closes it; tapping another tab closes it and navigates.
+- Tab bar stays visible on every screen (reading with stacked reading bar, chapter grid, egg card). On iPhone it hides only while typing in Search (keyboard up) and returns on dismiss.
+- SW cache yb-v8.
 ## v3.3 — 2026-10-12
 - Bottom bar: text labels replaced by original inline-SVG line icons (house, open book, magnifier, heart, letter A) with aria-labels; 56px tall.
 - Active tab shown in Easter-egg gold with a soft gold tint, in all themes; reading/chapter screens mark Books; Text tab lights while the Text panel is open.

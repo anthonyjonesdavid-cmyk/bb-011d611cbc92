@@ -47,9 +47,9 @@ body.night .big{color:#1c1917}
 .pageturn{animation:pt .28s ease-out}.pageturn.b{animation:ptb .28s ease-out}
 @keyframes pt{from{opacity:.2;transform:translateX(40px)}to{opacity:1;transform:none}}
 @keyframes ptb{from{opacity:.2;transform:translateX(-40px)}to{opacity:1;transform:none}}
-#sheet{position:fixed;inset:0;background:rgba(30,20,10,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+#sheet{position:fixed;top:0;left:0;right:0;bottom:var(--tabh,64px);background:rgba(30,20,10,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center}
 #sheet[hidden]{display:none}
-.panel{background:var(--bg);width:100%;max-width:620px;border-radius:22px 22px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom));max-height:88vh;overflow:auto;animation:up .25s}
+.panel{background:var(--bg);width:100%;max-width:620px;border-radius:22px 22px 0 0;padding:20px;max-height:calc(100% - env(safe-area-inset-top) - 12px);overflow:auto;animation:up .25s}
 @keyframes up{from{transform:translateY(40px);opacity:0}}
 .panel h3{margin:4px 0 12px;font-size:24px;color:var(--acc);text-align:center}
 .panel img{width:100%;border-radius:14px;display:block;margin:6px 0 14px}
@@ -80,3 +80,5 @@ select{width:100%;font:inherit;font-size:19px;padding:12px;border-radius:14px;bo
 #tabs button{position:relative;border-radius:14px}
 #tabs button.on svg{background:color-mix(in srgb,var(--gold) 16%,transparent);border-radius:12px;padding:3px;width:40px;height:36px}
 #tabs svg{width:40px;height:36px;padding:3px}
+body.typing #tabs{display:none}
+#tabs{position:relative;z-index:25}
