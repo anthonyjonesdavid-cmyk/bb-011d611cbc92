@@ -1,4 +1,9 @@
 # Changelog
+## v3.6 — 2026-10-12
+- Status bar: switched to black-translucent; the header now paints one flat solid band from the very top of the screen (through the clock area) to its bottom border, same color as <html> background and theme-color.
+- Header colors per theme so white iOS status text stays readable: Light = deep brown (#5b2b26) with cream title/gold icons; Sepia = dark umber (#4d3926); Night = near-black (#171412). Content area themes unchanged.
+- Header title: plain solid color, no font-smoothing override, no shadows/filters. Manifest theme_color updated.
+- SW cache yb-v10. NOTE: delete and re-add the Home Screen icon to pick up the new status-bar style.
 ## v3.5 — 2026-10-12
 - Top of screen: status-bar area now paints the same solid bar color as the header in every theme (page background + theme-color follow theme; theme class on <html>), no blur/opacity/shadows on header; title in full-strength ink with crisp font smoothing.
 - Home cover: removed the large repeated title; compact stars + dedication + "The Holy Bible · King James Version".
