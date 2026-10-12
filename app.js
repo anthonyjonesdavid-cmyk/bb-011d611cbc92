@@ -16,7 +16,8 @@ function chrome(title,tab,back,reading){$('#title').textContent=title;$('#back')
 function go(h){location.hash=h}
 $('#moon').onclick=toggleNight;
 $('#back').onclick=()=>history.length>1?history.back():go('#/');
-document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{const t=b.dataset.t;if(t=='text')return textSheet();go(t=='home'?'#/':'#/'+t)});
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{const t=b.dataset.t,open=!$('#sheet').hidden;if(t=='text'){if(open&&window._sheet=='text')return closeSheet();return textSheet()}closeSheet();go(t=='home'?'#/':'#/'+t)});
+function tabH(){document.documentElement.style.setProperty('--tabh',$('#tabs').offsetHeight+'px')}addEventListener('resize',tabH);setTimeout(tabH);
 
 async function home(){chrome("Yvonne's Bible",'home');
   const day=Math.floor((Date.now()-new Date().getTimezoneOffset()*6e4)/864e5),d=parse(DAILY[day%DAILY.length]),last=LS.get('last');
@@ -65,8 +66,8 @@ let tx=0,ty=0;V.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.t
 V.addEventListener('touchend',e=>{if($('#readnav').hidden)return;const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;if(Math.abs(dx)>80&&Math.abs(dx)>2*Math.abs(dy))turn(dx<0?1:-1)},{passive:true});
 V.addEventListener('click',e=>{const eg=e.target.closest('.egg');if(eg){e.stopPropagation();return eggCard(eg.dataset.egg)}
   const v=e.target.closest('.v');if(v){if(sp.on)return speakFrom(+v.id.slice(1)-1);verseSheet(v.dataset.r)}});
-function sheet(html){const s=$('#sheet');s.innerHTML=`<div class="panel">${html}</div>`;s.hidden=false;s.onclick=e=>{if(e.target==s)closeSheet()}}
-function closeSheet(){$('#sheet').hidden=true;if(window._tab)document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t==window._tab));document.querySelectorAll('.v.sel').forEach(x=>x.classList.remove('sel'))}
+function sheet(html,kind){window._sheet=kind||'';tabH();const s=$('#sheet');s.innerHTML=`<div class="panel">${html}</div>`;s.hidden=false;s.onclick=e=>{if(e.target==s)closeSheet()}}
+function closeSheet(){$('#sheet').hidden=true;window._sheet='';if(window._tab)document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t==window._tab));document.querySelectorAll('.v.sel').forEach(x=>x.classList.remove('sel'))}
 function nice(r){const p=parse(r);return`${bname(p.b)} ${p.c}:${p.v}`}
 function eggCard(r){const e=EGGS[r];sheet(`<div class="vref">${nice(r)}</div><h3>${e.title||'A little surprise'}</h3>${e.photo?`<img src="${e.photo}" alt="">`:''}${e.note?`<p class="msg">${e.note}</p>`:''}<button class="big" onclick="closeSheet()">Close</button>`)}
 function verseSheet(r){const el=document.querySelector(`.v[data-r="${r}"]`);el.classList.add('sel');const hl=LS.get('hl',{}),bm=LS.get('bm',[]),p=parse(r);
@@ -83,7 +84,7 @@ function textSheet(){setTimeout(()=>document.querySelectorAll('#tabs button').fo
   <div class="row" style="margin-top:10px"><button id="tv">Hear sample</button></div>
   ${!VOICES.some(v=>/enhanced|premium/i.test(v.name))&&!LS.get('voiceHintDone',false)?`<div class="hint" id="vh">Tip: for a warmer voice, open iPhone Settings › Accessibility › Spoken Content › Voices › English and download an “Enhanced” or “Premium” voice (like Ava or Zoe), then reopen this app. <button id="vhok">Got it</button></div>`:''}
   <div class="sect">At end of chapter</div><div class="row"><button id="an1" class="${LS.get('autoNext',true)?'on':''}">Keep reading</button><button id="an0" class="${LS.get('autoNext',true)?'':'on'}">Stop</button></div>
-  <div class="sect">Little surprises</div><div class="row"><button id="eg1" class="${he?'':'on'}">Show hearts</button><button id="eg0" class="${he?'on':''}">Hide until tapped</button></div><button class="big" onclick="closeSheet()" style="margin-top:20px">Done</button>`);
+  <div class="sect">Little surprises</div><div class="row"><button id="eg1" class="${he?'':'on'}">Show hearts</button><button id="eg0" class="${he?'on':''}">Hide until tapped</button></div><button class="big" onclick="closeSheet()" style="margin-top:20px">Done</button>`,'text');
   const set=(k,v)=>{LS.set(k,v);applyPrefs();textSheet();if(cur&&!$('#readnav').hidden)read(cur.b,cur.c)};
   $('#fm').onclick=()=>set('fs',Math.max(16,fs-2));$('#fp').onclick=()=>set('fs',Math.min(44,fs+2));
   document.querySelectorAll('[data-th]').forEach(b=>b.onclick=()=>set('theme',b.dataset.th));
@@ -96,7 +97,7 @@ function saved(){chrome('Saved','saved');const bm=LS.get('bm',[]),hl=Object.keys
   const list=a=>a.map(r=>{const p=parse(r);return`<button class="res" onclick="go('#/r/${p.b}/${p.c}/${p.v}')"><b>${nice(r)}</b></button>`}).join('');
   V.innerHTML=`<div class="wrap"><div class="sect">Saved verses</div>${list(bm)||'<p class="muted">Tap any verse while reading, then tap Save.</p>'}<div class="sect">Highlights</div>${list(hl)||'<p class="muted">No highlights yet.</p>'}</div>`}
 function search(){chrome('Search','search');V.innerHTML=`<div class="wrap"><input type="search" id="q" placeholder="Search words, e.g. shepherd" enterkeyhint="search" value="${LS.get('q','')}"><div id="out"><p class="muted">Type a word or phrase, then tap Search.</p></div></div>`;
-  const q=$('#q');q.addEventListener('keydown',e=>{if(e.key=='Enter'){q.blur();run(q.value)}});if(q.value)run(q.value)}
+  const q=$('#q');q.onfocus=()=>{if(matchMedia('(max-width:600px) and (pointer:coarse)').matches)document.body.classList.add('typing')};q.onblur=()=>document.body.classList.remove('typing');q.addEventListener('keydown',e=>{if(e.key=='Enter'){q.blur();run(q.value)}});if(q.value)run(q.value)}
 async function run(q){q=q.trim();LS.set('q',q);if(q.length<2)return;const out=$('#out');out.innerHTML='<p class="muted">Searching…</p>';
   const ref=q.match(/^(\d?\s?[a-z]+)\s+(\d+)(?::(\d+))?$/i);if(ref){const n=ref[1].replace(/\s/g,'').toLowerCase(),b=BOOKS.find(b=>b.name.replace(/\s/g,'').toLowerCase().startsWith(n));if(b)return go(`#/r/${b.code}/${ref[2]}${ref[3]?'/'+ref[3]:''}`)}
   await Promise.all(BOOKS.map(b=>book(b.code)));const lq=q.toLowerCase(),res=[];
