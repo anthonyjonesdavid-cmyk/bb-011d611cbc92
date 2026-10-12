@@ -68,8 +68,8 @@ mark{background:var(--hl);color:inherit}
 .grid.bk button{font-size:21px;min-height:58px}
 body.night .panel img{filter:brightness(.8)}
 #readnav{align-items:center}
-#readnav #play{flex:none;width:52px;height:52px;border-radius:50%;background:transparent;color:var(--acc);font-size:20px;margin:0 4px;border:1.5px solid var(--line);transition:background .2s,border-color .2s}
-#readnav #play.on{background:color-mix(in srgb,var(--acc) 12%,transparent);border-color:color-mix(in srgb,var(--acc) 45%,transparent);font-size:17px;letter-spacing:-2px}
+#readnav #play{flex:none;width:56px;height:56px;background:none;border:0;color:var(--acc);font-size:22px;margin:0 2px}
+#readnav #play.on{color:var(--red);font-size:19px;letter-spacing:-2px}
 .hint{background:color-mix(in srgb,var(--gold) 12%,transparent);border:1px solid color-mix(in srgb,var(--gold) 35%,transparent);border-radius:12px;padding:10px 12px;margin-top:10px;font-size:16px;color:var(--soft);line-height:1.4}
 .hint button{min-height:44px;color:var(--acc);font-size:16px;text-decoration:underline;padding:0 4px}
 .v.speaking{background:var(--hl);box-shadow:0 0 0 3px var(--hl)}
