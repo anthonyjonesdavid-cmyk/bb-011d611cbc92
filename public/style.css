@@ -1,14 +1,15 @@
 :root{--bg:#fbf6ee;--bar:#f3eadb;--ink:#2b2420;--soft:#7a6a5a;--line:#e2d5c0;--red:#b3261e;--gold:#c99a2e;--acc:#7a2e2a;--hl:#fbe7a6;--fs:24px}
-body.sepia{--bg:#f1e3c8;--bar:#e6d3b0;--ink:#3a2c1c;--line:#d4bf98;--hl:#f3d27a}
-body.night{--bg:#0e0c0b;--bar:#171412;--ink:#cdbfae;--soft:#857868;--line:#2a2420;--red:#e0806a;--gold:#9c7c3c;--acc:#d9a07f;--hl:#3d3016}
+.sepia{--bg:#f1e3c8;--bar:#e6d3b0;--ink:#3a2c1c;--line:#d4bf98;--hl:#f3d27a}
+.night{--bg:#0e0c0b;--bar:#171412;--ink:#cdbfae;--soft:#857868;--line:#2a2420;--red:#e0806a;--gold:#9c7c3c;--acc:#d9a07f;--hl:#3d3016}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:Georgia,"Iowan Old Style","Times New Roman",serif}
-body{display:flex;flex-direction:column;overflow:hidden}
+html{background:var(--bar)}
+html,body{margin:0;height:100%;color:var(--ink);font-family:Georgia,"Iowan Old Style","Times New Roman",serif}
+body{background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;min-height:48px;min-width:48px}
-header#top{flex:none;background:var(--bar);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top);display:flex;align-items:center;z-index:5}
-header h1{flex:1;text-align:center;font-size:21px;margin:0;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header#top{flex:none;background:var(--bar);opacity:1;-webkit-backdrop-filter:none;backdrop-filter:none;border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top);display:flex;align-items:center;z-index:5}
+header h1{flex:1;color:var(--ink);-webkit-font-smoothing:antialiased;text-shadow:none;text-align:center;font-size:21px;margin:0;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ib{width:56px;height:52px;font-size:34px;display:flex;align-items:center;justify-content:center;color:var(--acc)}
-#moon{font-size:26px}
+#moon svg{width:26px;height:26px}
 #back[hidden]{display:flex;visibility:hidden}
 main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:18px 20px 30px}
 #readnav{flex:none;display:flex;background:var(--bar);border-top:1px solid var(--line)}
@@ -20,11 +21,11 @@ main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:18px 20px 3
 #tabs button b{font-size:24px;font-weight:400;line-height:1.1}
 #tabs button.on{color:var(--acc);font-weight:600}
 .wrap{max-width:720px;margin:0 auto}
-.cover{text-align:center;padding:26px 6px 10px}
-.cover .orn{color:var(--gold);font-size:30px;letter-spacing:10px}
+.cover{text-align:center;padding:4px 6px 0}
+.cover .orn{color:var(--gold);font-size:22px;letter-spacing:10px;margin-bottom:4px}
 .cover h2{font-size:42px;margin:10px 0 6px;color:var(--acc);font-weight:600}
 .cover .ded{font-style:italic;color:var(--soft);font-size:21px;margin:0 0 6px}
-.card{background:var(--bar);border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin:18px 0}
+.card{background:var(--bar);border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin:14px 0 18px}
 .card h3{margin:0 0 8px;font-size:16px;letter-spacing:1px;text-transform:uppercase;color:var(--soft);font-weight:600}
 .card p{margin:0;font-size:23px;line-height:1.5}.card .ref{font-size:18px;color:var(--soft);margin-top:8px}
 .big{display:block;width:100%;background:var(--acc);color:#fff8ef;border-radius:16px;font-size:22px;padding:16px;margin:12px 0;font-weight:600}

@@ -1,4 +1,9 @@
 # Changelog
+## v3.5 — 2026-10-12
+- Top of screen: status-bar area now paints the same solid bar color as the header in every theme (page background + theme-color follow theme; theme class on <html>), no blur/opacity/shadows on header; title in full-strength ink with crisp font smoothing.
+- Home cover: removed the large repeated title; compact stars + dedication + "The Holy Bible · King James Version".
+- Night toggle: emoji replaced by line-drawn sun/moon SVG icons in bar color.
+- SW cache yb-v9.
 ## v3.4 — 2026-10-12
 - Fix: tab bar no longer covered when the Text panel (or any card) opens. Sheets now sit above the tab bar; A stays gold while open; tapping A again closes it; tapping another tab closes it and navigates.
 - Tab bar stays visible on every screen (reading with stacked reading bar, chapter grid, egg card). On iPhone it hides only while typing in Search (keyboard up) and returns on dismiss.

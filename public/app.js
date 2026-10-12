@@ -7,8 +7,8 @@ const strip=h=>h.replace(/<h>.*?<\/h>/g,'').replace(/<[^>]+>/g,'').replace(/¶\s
 const parse=r=>{const m=r.trim().match(/^(\w+)\s+(\d+):(\d+)$/);return m&&{b:m[1].toUpperCase(),c:+m[2],v:+m[3]}};
 const bname=c=>(BOOKS.find(b=>b.code==c)||{}).name||c;
 async function book(c){if(!cache[c])cache[c]=await (await fetch('data/'+c+'.json')).json();return cache[c]}
-function applyPrefs(){document.documentElement.style.setProperty('--fs',LS.get('fs',24)+'px');let t=LS.get('theme','light');if(t=='dark')t='night';const n=t=='auto'?(matchMedia('(prefers-color-scheme: dark)').matches?'night':'light'):t;document.body.className=n;
-  const m=document.querySelector('meta[name=theme-color]');if(m)m.content=getComputedStyle(document.body).getPropertyValue('--bar').trim();const mo=document.getElementById('moon');if(mo){mo.textContent=n=='night'?'☀':'☾';mo.setAttribute('aria-label',n=='night'?'Day mode':'Night mode')}}
+function applyPrefs(){document.documentElement.style.setProperty('--fs',LS.get('fs',24)+'px');let t=LS.get('theme','light');if(t=='dark')t='night';const n=t=='auto'?(matchMedia('(prefers-color-scheme: dark)').matches?'night':'light'):t;document.body.className=n;document.documentElement.className=n;
+  const m=document.querySelector('meta[name=theme-color]');if(m)m.content=getComputedStyle(document.body).getPropertyValue('--bar').trim();const mo=document.getElementById('moon');if(mo){mo.innerHTML=n=='night'?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M19.5 14.5A7.8 7.8 0 0 1 9.5 4.5a7.8 7.8 0 1 0 10 10z"/></svg>';mo.setAttribute('aria-label',n=='night'?'Day mode':'Night mode')}}
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyPrefs);
 function toggleNight(){const night=document.body.className=='night';if(!night&&LS.get('theme','light')!='night')LS.set('dayTheme',LS.get('theme','light')=='auto'?'light':LS.get('theme','light'));LS.set('theme',night?(LS.get('dayTheme','light')):'night');applyPrefs();toast(night?'Day mode':'Night mode')}
 function toast(t){const e=$('#toast');e.textContent=t;e.hidden=false;clearTimeout(e._t);e._t=setTimeout(()=>e.hidden=true,1800)}
@@ -21,7 +21,7 @@ function tabH(){document.documentElement.style.setProperty('--tabh',$('#tabs').o
 
 async function home(){chrome("Yvonne's Bible",'home');
   const day=Math.floor((Date.now()-new Date().getTimezoneOffset()*6e4)/864e5),d=parse(DAILY[day%DAILY.length]),last=LS.get('last');
-  V.innerHTML=`<div class="wrap"><div class="cover"><div class="orn">✦ ✦ ✦</div><h2>Yvonne's Bible</h2><p class="ded">With love from your family</p><div class="muted">The Holy Bible · King James Version</div></div>
+  V.innerHTML=`<div class="wrap"><div class="cover"><div class="orn">✦ ✦ ✦</div><p class="ded">With love from your family</p><div class="muted">The Holy Bible · King James Version</div></div>
   <div class="card" id="daily"><h3>Today's verse</h3><p>…</p></div>${last?`<button class="cont" onclick="go('#/r/${last.b}/${last.c}')">Continue: ${bname(last.b)} ${last.c} ›</button>`:''}${bookGrid()}</div>`;
   const bk=await book(d.b);$('#daily').innerHTML=`<h3>Today's verse</h3><p>${bk.c[d.c-1][d.v-1].replace(/<h>.*?<\/h>/,'').replace(/¶\s?/,'')}</p><div class="ref">${bname(d.b)} ${d.c}:${d.v}</div>`;
   $('#daily').onclick=()=>go(`#/r/${d.b}/${d.c}/${d.v}`)}
