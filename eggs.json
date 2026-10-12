@@ -1,0 +1,8 @@
+{
+  "_help": "Each entry: ref = BOOKCODE chapter:verse (codes are in data/books.json, e.g. PSA, JHN, MAT). photo is optional (put the file in /eggs/). note is optional. These first entries are PLACEHOLDERS.",
+  "eggs": [
+    {"ref": "PSA 23:1", "title": "A little surprise", "note": "Placeholder: a note from the family will go here.", "photo": "eggs/placeholder-sunrise.jpg"},
+    {"ref": "JHN 3:16", "title": "Placeholder", "note": "Placeholder message. Replace with a family memory tied to this verse.", "photo": "eggs/placeholder-flower.jpg"},
+    {"ref": "GEN 1:1", "title": "Welcome", "note": "Placeholder: a note only, no photo."}
+  ]
+}
