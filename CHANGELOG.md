@@ -1,4 +1,8 @@
 # Changelog
+## v3.3 — 2026-10-12
+- Bottom bar: text labels replaced by original inline-SVG line icons (house, open book, magnifier, heart, letter A) with aria-labels; 56px tall.
+- Active tab shown in Easter-egg gold with a soft gold tint, in all themes; reading/chapter screens mark Books; Text tab lights while the Text panel is open.
+- SW cache yb-v7.
 ## v3.2 — 2026-10-12
 - Play button is now a plain icon in the bar's text color (like Prev/Next), no outline or tint; 56px invisible tap area. Playing shows the pause icon in the soft red accent.
 - SW cache yb-v6.
