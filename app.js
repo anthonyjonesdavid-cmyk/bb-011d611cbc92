@@ -39,12 +39,32 @@ async function read(c,ch,vv,dir){ch=+ch;const b=BOOKS.find(x=>x.code==c),bk=awai
   if(vv){const e=$('#v'+vv);if(e){e.scrollIntoView({block:'center'});e.classList.add('flash')}}}
 function nextRef(d){if(!cur)return null;const i=BOOKS.findIndex(x=>x.code==cur.b),b=BOOKS[i];let c=cur.c+d;
   if(c>=1&&c<=b.ch)return[b.code,c];const nb=BOOKS[i+d];return nb?[nb.code,d>0?1:nb.ch]:null}
-function turn(d){const n=nextRef(d);if(n){history.replaceState(null,'',`#/r/${n[0]}/${n[1]}`);read(n[0],n[1],null,d)}}
+async function turn(d,keep){const n=nextRef(d);if(!n)return false;if(!keep)stopSpeak();history.replaceState(null,'',`#/r/${n[0]}/${n[1]}`);await read(n[0],n[1],null,d);return true}
+// ---- Read aloud ----
+const SS=window.speechSynthesis;let sp={on:false,i:0,tok:0},wake=null,VOICES=[];
+function loadVoices(){if(!SS)return;VOICES=SS.getVoices().filter(v=>/^en[-_](US|GB|AU|IE|CA)/i.test(v.lang))}
+if(SS){loadVoices();SS.addEventListener&&SS.addEventListener('voiceschanged',loadVoices)}
+function score(v){let s=0;if(/premium/i.test(v.name))s+=40;if(/enhanced/i.test(v.name))s+=30;if(/en[-_]US/i.test(v.lang))s+=6;if(/en[-_]GB/i.test(v.lang))s+=4;if(/samantha|ava|allison|susan|karen|daniel|serena|zoe|evan|nathan/i.test(v.name))s+=5;if(/eloquence|grandma|grandpa|novelty|bells|bad news|bubbles|boing|cellos|jester|organ|trinoids|whisper|zarvox|albert|fred|junior|kathy|ralph|superstar|wobble|rocko|shelley|reed|sandy|flo|eddy/i.test(v.name))s-=50;if(v.localService)s+=2;return s}
+function pickVoice(){const id=LS.get('voice','');return VOICES.find(v=>v.voiceURI==id)||[...VOICES].sort((a,b)=>score(b)-score(a))[0]||null}
+function speechText(h){return h.replace(/<h>(.*?)<\/h>/,(m,t)=>t.replace(/[.\s]*$/,'')+'. ').replace(/<s>LORD<\/s>/g,'Lord').replace(/<s>GOD<\/s>/g,'God').replace(/<[^>]+>/g,'').replace(/¶\s?/g,'').replace(/\bLORD\b/g,'Lord')}
+function playBtn(){const b=$('#play');b.textContent=sp.on?'❚❚':'▶';b.classList.toggle('on',sp.on);b.setAttribute('aria-label',sp.on?'Pause reading':'Read aloud')}
+function mark(i){document.querySelectorAll('.v.speaking').forEach(x=>x.classList.remove('speaking'));const e=$('#v'+(i+1));if(e){e.classList.add('speaking');e.scrollIntoView({block:'center',behavior:'smooth'})}}
+async function keepAwake(on){try{if(on&&'wakeLock' in navigator&&!wake){wake=await navigator.wakeLock.request('screen');wake.addEventListener('release',()=>wake=null)}if(!on&&wake){await wake.release();wake=null}}catch(e){}}
+function speakFrom(i){if(!SS||!cur)return toast('Read aloud is not available');const tok=++sp.tok;SS.cancel();sp.on=true;sp.i=i;playBtn();keepAwake(true);
+  const vs=cache[cur.b].c[cur.c-1];if(i>=vs.length){return endChapter(tok)}
+  mark(i);const u=new SpeechSynthesisUtterance(speechText(vs[i]));const v=pickVoice();if(v){u.voice=v;u.lang=v.lang}else u.lang='en-US';u.rate=LS.get('rate',0.9);
+  u.onend=()=>{if(tok==sp.tok&&sp.on)speakFrom(i+1)};u.onerror=e=>{if(tok==sp.tok&&sp.on&&e.error!='interrupted'&&e.error!='canceled')speakFrom(i+1)};
+  setTimeout(()=>{if(tok==sp.tok)SS.speak(u)},SS.speaking?120:0)}
+async function endChapter(tok){if(LS.get('autoNext',true)&&await turn(1,true)){if(tok==sp.tok&&sp.on)speakFrom(0)}else stopSpeak(true)}
+function stopSpeak(keepPos){sp.tok++;sp.on=false;if(SS)SS.cancel();if(!keepPos)sp.i=0;keepAwake(false);if($('#play'))playBtn();document.querySelectorAll('.v.speaking').forEach(x=>x.classList.remove('speaking'))}
+$('#play').onclick=()=>{if(sp.on)stopSpeak(true);else speakFrom(sp.i||firstVisible())};
+function firstVisible(){const vs=[...document.querySelectorAll('.v')],top=V.getBoundingClientRect().top;const f=vs.findIndex(e=>e.getBoundingClientRect().bottom>top+10);return f<0?0:f}
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&sp.on)stopSpeak(true)});window.addEventListener('pagehide',()=>stopSpeak(true));
 $('#prev').onclick=()=>turn(-1);$('#next').onclick=()=>turn(1);$('#chap').onclick=()=>go('#/b/'+cur.b);
 let tx=0,ty=0;V.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
 V.addEventListener('touchend',e=>{if($('#readnav').hidden)return;const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;if(Math.abs(dx)>80&&Math.abs(dx)>2*Math.abs(dy))turn(dx<0?1:-1)},{passive:true});
 V.addEventListener('click',e=>{const eg=e.target.closest('.egg');if(eg){e.stopPropagation();return eggCard(eg.dataset.egg)}
-  const v=e.target.closest('.v');if(v)verseSheet(v.dataset.r)});
+  const v=e.target.closest('.v');if(v){if(sp.on)return speakFrom(+v.id.slice(1)-1);verseSheet(v.dataset.r)}});
 function sheet(html){const s=$('#sheet');s.innerHTML=`<div class="panel">${html}</div>`;s.hidden=false;s.onclick=e=>{if(e.target==s)closeSheet()}}
 function closeSheet(){$('#sheet').hidden=true;document.querySelectorAll('.v.sel').forEach(x=>x.classList.remove('sel'))}
 function nice(r){const p=parse(r);return`${bname(p.b)} ${p.c}:${p.v}`}
@@ -58,10 +78,18 @@ function verseSheet(r){const el=document.querySelector(`.v[data-r="${r}"]`);el.c
 function textSheet(){const fs=LS.get('fs',24),th=LS.get('theme','light'),he=LS.get('hideEggs',false);
   sheet(`<h3>Text &amp; Display</h3><div class="sect">Text size</div><div class="row"><button id="fm" aria-label="Smaller">A−</button><button disabled style="border:0;font-size:${fs}px">Aa ${fs}</button><button id="fp" aria-label="Larger" style="font-size:26px">A+</button></div>
   <div class="sect">Page color</div><p class="muted" style="margin:-4px 0 10px;font-size:16px">Auto follows your iPhone's dark mode</p><div class="row">${[['light','Light'],['sepia','Sepia'],['night','Night'],['auto','Auto']].map(([t,l])=>`<button data-th="${t}" class="${t==th||(th=='dark'&&t=='night')?'on':''}">${l}</button>`).join('')}</div>
+  <div class="sect">Reading aloud speed</div><div class="row">${[[0.75,'Slow'],[0.9,'Gentle'],[1,'Normal'],[1.25,'Quick']].map(([r,l])=>`<button data-rate="${r}" class="${LS.get('rate',0.9)==r?'on':''}">${l}</button>`).join('')}</div>
+  <div class="sect">Voice</div><select id="voice"><option value="">Best available${pickVoice()?' ('+pickVoice().name+')':''}</option>${[...VOICES].sort((a,b)=>score(b)-score(a)).map(v=>`<option value="${v.voiceURI}" ${LS.get('voice','')==v.voiceURI?'selected':''}>${v.name} (${v.lang})</option>`).join('')}</select>
+  <div class="row" style="margin-top:10px"><button id="tv">Hear sample</button></div>
+  <p class="help">For a nicer voice: iPhone Settings › Accessibility › Spoken Content › Voices › English, then download an "Enhanced" or "Premium" voice (e.g. Ava or Zoe). Then reopen this app.</p>
+  <div class="sect">At end of chapter</div><div class="row"><button id="an1" class="${LS.get('autoNext',true)?'on':''}">Keep reading</button><button id="an0" class="${LS.get('autoNext',true)?'':'on'}">Stop</button></div>
   <div class="sect">Little surprises</div><div class="row"><button id="eg1" class="${he?'':'on'}">Show hearts</button><button id="eg0" class="${he?'on':''}">Hide until tapped</button></div><button class="big" onclick="closeSheet()" style="margin-top:20px">Done</button>`);
   const set=(k,v)=>{LS.set(k,v);applyPrefs();textSheet();if(cur&&!$('#readnav').hidden)read(cur.b,cur.c)};
   $('#fm').onclick=()=>set('fs',Math.max(16,fs-2));$('#fp').onclick=()=>set('fs',Math.min(44,fs+2));
   document.querySelectorAll('[data-th]').forEach(b=>b.onclick=()=>set('theme',b.dataset.th));
+  document.querySelectorAll('[data-rate]').forEach(b=>b.onclick=()=>{LS.set('rate',+b.dataset.rate);textSheet()});
+  $('#voice').onchange=e=>LS.set('voice',e.target.value);$('#an1').onclick=()=>{LS.set('autoNext',true);textSheet()};$('#an0').onclick=()=>{LS.set('autoNext',false);textSheet()};
+  $('#tv').onclick=()=>{if(!SS)return;stopSpeak(true);const u=new SpeechSynthesisUtterance('The Lord is my shepherd; I shall not want.');const v=pickVoice();if(v){u.voice=v;u.lang=v.lang}u.rate=LS.get('rate',0.9);SS.speak(u)};
   $('#eg1').onclick=()=>set('hideEggs',false);$('#eg0').onclick=()=>set('hideEggs',true)}
 function saved(){chrome('Saved','saved');const bm=LS.get('bm',[]),hl=Object.keys(LS.get('hl',{}));
   const list=a=>a.map(r=>{const p=parse(r);return`<button class="res" onclick="go('#/r/${p.b}/${p.c}/${p.v}')"><b>${nice(r)}</b></button>`}).join('');
@@ -74,7 +102,7 @@ async function run(q){q=q.trim();LS.set('q',q);if(q.length<2)return;const out=$(
   for(const b of BOOKS)cache[b.code].c.forEach((ch,ci)=>ch.forEach((v,vi)=>{const t=strip(v);if(t.toLowerCase().includes(lq))res.push([b.code,ci+1,vi+1,t])}));
   const esc=q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),re=new RegExp(esc,'gi');
   out.innerHTML=`<p class="muted">${res.length} verse${res.length==1?'':'s'}${res.length>300?' (showing first 300)':''}</p>`+res.slice(0,300).map(([b,c,v,t])=>`<button class="res" onclick="go('#/r/${b}/${c}/${v}')"><b>${bname(b)} ${c}:${v}</b>${t.replace(re,m=>'<mark>'+m+'</mark>')}</button>`).join('')}
-function route(){closeSheet();const p=location.hash.replace(/^#\/?/,'').split('/');
+function route(){closeSheet();stopSpeak();const p=location.hash.replace(/^#\/?/,'').split('/');
   if(p[0]=='books')books();else if(p[0]=='b')chapters(p[1]);else if(p[0]=='r')read(p[1],p[2],p[3]);else if(p[0]=='search')search();else if(p[0]=='saved')saved();else home()}
 (async()=>{applyPrefs();BOOKS=await (await fetch('data/books.json')).json();
   try{const j=await (await fetch('eggs.json',{cache:'no-cache'})).json();(j.eggs||[]).forEach(e=>{const p=parse(e.ref);if(p)EGGS[`${p.b} ${p.c}:${p.v}`]=e})}catch(e){}
