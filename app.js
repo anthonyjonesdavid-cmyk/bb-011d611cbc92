@@ -47,7 +47,7 @@ if(SS){loadVoices();SS.addEventListener&&SS.addEventListener('voiceschanged',loa
 function score(v){let s=0;if(/premium/i.test(v.name))s+=40;if(/enhanced/i.test(v.name))s+=30;if(/en[-_]US/i.test(v.lang))s+=6;if(/en[-_]GB/i.test(v.lang))s+=4;if(/samantha|ava|allison|susan|karen|daniel|serena|zoe|evan|nathan/i.test(v.name))s+=5;if(/eloquence|grandma|grandpa|novelty|bells|bad news|bubbles|boing|cellos|jester|organ|trinoids|whisper|zarvox|albert|fred|junior|kathy|ralph|superstar|wobble|rocko|shelley|reed|sandy|flo|eddy/i.test(v.name))s-=50;if(v.localService)s+=2;return s}
 function pickVoice(){const id=LS.get('voice','');return VOICES.find(v=>v.voiceURI==id)||[...VOICES].sort((a,b)=>score(b)-score(a))[0]||null}
 function speechText(h){return h.replace(/<h>(.*?)<\/h>/,(m,t)=>t.replace(/[.\s]*$/,'')+'. ').replace(/<s>LORD<\/s>/g,'Lord').replace(/<s>GOD<\/s>/g,'God').replace(/<[^>]+>/g,'').replace(/¶\s?/g,'').replace(/\bLORD\b/g,'Lord')}
-function playBtn(){const b=$('#play');b.textContent=sp.on?'❚❚':'▶';b.classList.toggle('on',sp.on);b.setAttribute('aria-label',sp.on?'Pause reading':'Read aloud')}
+function playBtn(){const b=$('#play');b.textContent=sp.on?'❚❚':'▶\uFE0E';b.classList.toggle('on',sp.on);b.setAttribute('aria-label',sp.on?'Pause reading':'Read aloud')}
 function mark(i){document.querySelectorAll('.v.speaking').forEach(x=>x.classList.remove('speaking'));const e=$('#v'+(i+1));if(e){e.classList.add('speaking');e.scrollIntoView({block:'center',behavior:'smooth'})}}
 async function keepAwake(on){try{if(on&&'wakeLock' in navigator&&!wake){wake=await navigator.wakeLock.request('screen');wake.addEventListener('release',()=>wake=null)}if(!on&&wake){await wake.release();wake=null}}catch(e){}}
 function speakFrom(i){if(!SS||!cur)return toast('Read aloud is not available');const tok=++sp.tok;SS.cancel();sp.on=true;sp.i=i;playBtn();keepAwake(true);
@@ -81,13 +81,14 @@ function textSheet(){const fs=LS.get('fs',24),th=LS.get('theme','light'),he=LS.g
   <div class="sect">Reading aloud speed</div><div class="row">${[[0.75,'Slow'],[0.9,'Gentle'],[1,'Normal'],[1.25,'Quick']].map(([r,l])=>`<button data-rate="${r}" class="${LS.get('rate',0.9)==r?'on':''}">${l}</button>`).join('')}</div>
   <div class="sect">Voice</div><select id="voice"><option value="">Best available${pickVoice()?' ('+pickVoice().name+')':''}</option>${[...VOICES].sort((a,b)=>score(b)-score(a)).map(v=>`<option value="${v.voiceURI}" ${LS.get('voice','')==v.voiceURI?'selected':''}>${v.name} (${v.lang})</option>`).join('')}</select>
   <div class="row" style="margin-top:10px"><button id="tv">Hear sample</button></div>
-  <p class="help">For a nicer voice: iPhone Settings › Accessibility › Spoken Content › Voices › English, then download an "Enhanced" or "Premium" voice (e.g. Ava or Zoe). Then reopen this app.</p>
+  ${!VOICES.some(v=>/enhanced|premium/i.test(v.name))&&!LS.get('voiceHintDone',false)?`<div class="hint" id="vh">Tip: for a warmer voice, open iPhone Settings › Accessibility › Spoken Content › Voices › English and download an “Enhanced” or “Premium” voice (like Ava or Zoe), then reopen this app. <button id="vhok">Got it</button></div>`:''}
   <div class="sect">At end of chapter</div><div class="row"><button id="an1" class="${LS.get('autoNext',true)?'on':''}">Keep reading</button><button id="an0" class="${LS.get('autoNext',true)?'':'on'}">Stop</button></div>
   <div class="sect">Little surprises</div><div class="row"><button id="eg1" class="${he?'':'on'}">Show hearts</button><button id="eg0" class="${he?'on':''}">Hide until tapped</button></div><button class="big" onclick="closeSheet()" style="margin-top:20px">Done</button>`);
   const set=(k,v)=>{LS.set(k,v);applyPrefs();textSheet();if(cur&&!$('#readnav').hidden)read(cur.b,cur.c)};
   $('#fm').onclick=()=>set('fs',Math.max(16,fs-2));$('#fp').onclick=()=>set('fs',Math.min(44,fs+2));
   document.querySelectorAll('[data-th]').forEach(b=>b.onclick=()=>set('theme',b.dataset.th));
   document.querySelectorAll('[data-rate]').forEach(b=>b.onclick=()=>{LS.set('rate',+b.dataset.rate);textSheet()});
+  if($('#vhok'))$('#vhok').onclick=()=>{LS.set('voiceHintDone',true);$('#vh').remove()};
   $('#voice').onchange=e=>LS.set('voice',e.target.value);$('#an1').onclick=()=>{LS.set('autoNext',true);textSheet()};$('#an0').onclick=()=>{LS.set('autoNext',false);textSheet()};
   $('#tv').onclick=()=>{if(!SS)return;stopSpeak(true);const u=new SpeechSynthesisUtterance('The Lord is my shepherd; I shall not want.');const v=pickVoice();if(v){u.voice=v;u.lang=v.lang}u.rate=LS.get('rate',0.9);SS.speak(u)};
   $('#eg1').onclick=()=>set('hideEggs',false);$('#eg0').onclick=()=>set('hideEggs',true)}
