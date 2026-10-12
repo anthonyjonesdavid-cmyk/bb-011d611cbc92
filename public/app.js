@@ -7,24 +7,26 @@ const strip=h=>h.replace(/<h>.*?<\/h>/g,'').replace(/<[^>]+>/g,'').replace(/¶\s
 const parse=r=>{const m=r.trim().match(/^(\w+)\s+(\d+):(\d+)$/);return m&&{b:m[1].toUpperCase(),c:+m[2],v:+m[3]}};
 const bname=c=>(BOOKS.find(b=>b.code==c)||{}).name||c;
 async function book(c){if(!cache[c])cache[c]=await (await fetch('data/'+c+'.json')).json();return cache[c]}
-function applyPrefs(){document.documentElement.style.setProperty('--fs',LS.get('fs',24)+'px');document.body.className=LS.get('theme','light')}
+function applyPrefs(){document.documentElement.style.setProperty('--fs',LS.get('fs',24)+'px');let t=LS.get('theme','light');if(t=='dark')t='night';const n=t=='auto'?(matchMedia('(prefers-color-scheme: dark)').matches?'night':'light'):t;document.body.className=n;
+  const m=document.querySelector('meta[name=theme-color]');if(m)m.content=getComputedStyle(document.body).getPropertyValue('--bar').trim();const mo=document.getElementById('moon');if(mo){mo.textContent=n=='night'?'☀':'☾';mo.setAttribute('aria-label',n=='night'?'Day mode':'Night mode')}}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyPrefs);
+function toggleNight(){const night=document.body.className=='night';if(!night&&LS.get('theme','light')!='night')LS.set('dayTheme',LS.get('theme','light')=='auto'?'light':LS.get('theme','light'));LS.set('theme',night?(LS.get('dayTheme','light')):'night');applyPrefs();toast(night?'Day mode':'Night mode')}
 function toast(t){const e=$('#toast');e.textContent=t;e.hidden=false;clearTimeout(e._t);e._t=setTimeout(()=>e.hidden=true,1800)}
 function chrome(title,tab,back,reading){$('#title').textContent=title;$('#back').hidden=!back;document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t==tab));$('#readnav').hidden=!reading;V.scrollTop=0}
 function go(h){location.hash=h}
+$('#moon').onclick=toggleNight;
 $('#back').onclick=()=>history.length>1?history.back():go('#/');
 document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{const t=b.dataset.t;if(t=='text')return textSheet();go(t=='home'?'#/':'#/'+t)});
 
 async function home(){chrome("Yvonne's Bible",'home');
   const day=Math.floor((Date.now()-new Date().getTimezoneOffset()*6e4)/864e5),d=parse(DAILY[day%DAILY.length]),last=LS.get('last');
   V.innerHTML=`<div class="wrap"><div class="cover"><div class="orn">✦ ✦ ✦</div><h2>Yvonne's Bible</h2><p class="ded">With love from your family</p><div class="muted">The Holy Bible · King James Version</div></div>
-  ${last?`<button class="big" id="resume">Continue reading<br><span style="font-weight:400;font-size:19px">${bname(last.b)} ${last.c}</span></button>`:`<button class="big" onclick="go('#/r/GEN/1')">Begin reading</button>`}
-  <button class="big alt" onclick="go('#/books')">Choose a book</button>
-  <div class="card" id="daily"><h3>Today's verse</h3><p>…</p></div></div>`;
-  if(last)$('#resume').onclick=()=>go(`#/r/${last.b}/${last.c}`);
+  <div class="card" id="daily"><h3>Today's verse</h3><p>…</p></div>${last?`<button class="cont" onclick="go('#/r/${last.b}/${last.c}')">Continue: ${bname(last.b)} ${last.c} ›</button>`:''}${bookGrid()}</div>`;
   const bk=await book(d.b);$('#daily').innerHTML=`<h3>Today's verse</h3><p>${bk.c[d.c-1][d.v-1].replace(/<h>.*?<\/h>/,'').replace(/¶\s?/,'')}</p><div class="ref">${bname(d.b)} ${d.c}:${d.v}</div>`;
   $('#daily').onclick=()=>go(`#/r/${d.b}/${d.c}/${d.v}`)}
-function books(){chrome('Books','books');const g=nt=>BOOKS.filter(b=>b.nt==nt).map(b=>`<button onclick="go('#/b/${b.code}')">${b.name}</button>`).join('');
-  V.innerHTML=`<div class="wrap"><div class="sect">Old Testament</div><div class="grid">${g(false)}</div><div class="sect">New Testament</div><div class="grid">${g(true)}</div></div>`}
+function bookGrid(){const g=nt=>BOOKS.filter(b=>b.nt==nt).map(b=>`<button onclick="go('#/b/${b.code}')">${b.name}</button>`).join('');
+  return `<div class="sect">Old Testament</div><div class="grid bk">${g(false)}</div><div class="sect">New Testament</div><div class="grid bk">${g(true)}</div>`}
+function books(){chrome('Books','books');V.innerHTML=`<div class="wrap">${bookGrid()}</div>`}
 function chapters(c){const b=BOOKS.find(x=>x.code==c);chrome(b.name,'books',true);
   if(b.ch==1)return go(`#/r/${c}/1`);
   V.innerHTML=`<div class="wrap"><div class="sect">Chapters</div><div class="grid nums">${Array.from({length:b.ch},(_,i)=>`<button onclick="go('#/r/${c}/${i+1}')">${i+1}</button>`).join('')}</div></div>`}
@@ -55,7 +57,7 @@ function verseSheet(r){const el=document.querySelector(`.v[data-r="${r}"]`);el.c
   if(EGGS[r])$('#se').onclick=()=>eggCard(r)}
 function textSheet(){const fs=LS.get('fs',24),th=LS.get('theme','light'),he=LS.get('hideEggs',false);
   sheet(`<h3>Text &amp; Display</h3><div class="sect">Text size</div><div class="row"><button id="fm" aria-label="Smaller">A−</button><button disabled style="border:0;font-size:${fs}px">Aa ${fs}</button><button id="fp" aria-label="Larger" style="font-size:26px">A+</button></div>
-  <div class="sect">Page color</div><div class="row">${['light','sepia','dark'].map(t=>`<button data-th="${t}" class="${t==th?'on':''}">${t[0].toUpperCase()+t.slice(1)}</button>`).join('')}</div>
+  <div class="sect">Page color</div><p class="muted" style="margin:-4px 0 10px;font-size:16px">Auto follows your iPhone's dark mode</p><div class="row">${[['light','Light'],['sepia','Sepia'],['night','Night'],['auto','Auto']].map(([t,l])=>`<button data-th="${t}" class="${t==th||(th=='dark'&&t=='night')?'on':''}">${l}</button>`).join('')}</div>
   <div class="sect">Little surprises</div><div class="row"><button id="eg1" class="${he?'':'on'}">Show hearts</button><button id="eg0" class="${he?'on':''}">Hide until tapped</button></div><button class="big" onclick="closeSheet()" style="margin-top:20px">Done</button>`);
   const set=(k,v)=>{LS.set(k,v);applyPrefs();textSheet();if(cur&&!$('#readnav').hidden)read(cur.b,cur.c)};
   $('#fm').onclick=()=>set('fs',Math.max(16,fs-2));$('#fp').onclick=()=>set('fs',Math.min(44,fs+2));

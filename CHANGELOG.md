@@ -1,4 +1,8 @@
 # Changelog
+## v2 — 2026-10-12
+- Night theme (near-black, warm dim text, softened red letters, dimmed gold hearts, photos dimmed) replaces Dark; one-tap moon/sun toggle in the top bar on every screen; Auto option follows iPhone dark mode. Bars and theme-color match.
+- Home: Begin/Continue buttons removed; book list (Old/New Testament) shown under Today's Verse; subtle "Continue: Book N ›" link when there's a saved spot.
+- SW cache yb-v3.
 ## v1 — 2026-10-12
 - Yvonne's Bible: KJV (eBible.org eng-kjv USFM, public domain) with red-letter words of Jesus (\wj), italics for translator-added words, LORD styling, Psalm titles. 66 books, 31,102 verses, per-book JSON lazy-loaded.
 - iPhone-first: opaque top bar, bottom tab bar (Home, Books, Search, Saved, Text), Prev/Next bar while reading, swipe to turn chapters, 44px+ tap targets.
