@@ -1,14 +1,14 @@
-:root{--bg:#fbf6ee;--bar:#f3eadb;--ink:#2b2420;--soft:#7a6a5a;--line:#e2d5c0;--red:#b3261e;--gold:#c99a2e;--acc:#7a2e2a;--hl:#fbe7a6;--fs:24px}
-.sepia{--bg:#f1e3c8;--bar:#e6d3b0;--ink:#3a2c1c;--line:#d4bf98;--hl:#f3d27a}
-.night{--bg:#0e0c0b;--bar:#171412;--ink:#cdbfae;--soft:#857868;--line:#2a2420;--red:#e0806a;--gold:#9c7c3c;--acc:#d9a07f;--hl:#3d3016}
+:root{--hbar:#5b2b26;--hink:#f7ecdb;--hacc:#ecc98e;--hline:#4a221e;--bg:#fbf6ee;--bar:#f3eadb;--ink:#2b2420;--soft:#7a6a5a;--line:#e2d5c0;--red:#b3261e;--gold:#c99a2e;--acc:#7a2e2a;--hl:#fbe7a6;--fs:24px}
+.sepia{--hbar:#4d3926;--hink:#f3e6cc;--hacc:#e6c582;--hline:#3e2d1e;--bg:#f1e3c8;--bar:#e6d3b0;--ink:#3a2c1c;--line:#d4bf98;--hl:#f3d27a}
+.night{--hbar:#171412;--hink:#cdbfae;--hacc:#d9a07f;--hline:#2a2420;--bg:#0e0c0b;--bar:#171412;--ink:#cdbfae;--soft:#857868;--line:#2a2420;--red:#e0806a;--gold:#9c7c3c;--acc:#d9a07f;--hl:#3d3016}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{background:var(--bar)}
+html{background:var(--hbar)}
 html,body{margin:0;height:100%;color:var(--ink);font-family:Georgia,"Iowan Old Style","Times New Roman",serif}
 body{background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;min-height:48px;min-width:48px}
-header#top{flex:none;background:var(--bar);opacity:1;-webkit-backdrop-filter:none;backdrop-filter:none;border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top);display:flex;align-items:center;z-index:5}
-header h1{flex:1;color:var(--ink);-webkit-font-smoothing:antialiased;text-shadow:none;text-align:center;font-size:21px;margin:0;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ib{width:56px;height:52px;font-size:34px;display:flex;align-items:center;justify-content:center;color:var(--acc)}
+header#top{flex:none;background:var(--hbar);border-bottom:1px solid var(--hline);padding-top:env(safe-area-inset-top);display:flex;align-items:center;z-index:5}
+header h1{flex:1;color:var(--hink);text-align:center;font-size:21px;margin:0;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ib{width:56px;height:52px;font-size:34px;display:flex;align-items:center;justify-content:center;color:var(--hacc)}
 #moon svg{width:26px;height:26px}
 #back[hidden]{display:flex;visibility:hidden}
 main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:18px 20px 30px}
@@ -77,7 +77,6 @@ body.night .panel img{filter:brightness(.8)}
 select{width:100%;font:inherit;font-size:19px;padding:12px;border-radius:14px;border:2px solid var(--line);background:var(--bar);color:var(--ink);min-height:52px}
 .help{font-size:16px;color:var(--soft);line-height:1.4;margin:8px 2px 0}
 #tabs button.on{color:var(--gold)}
-#tabs button.on::after{content:"";position:absolute}
 #tabs button{position:relative;border-radius:14px}
 #tabs button.on svg{background:color-mix(in srgb,var(--gold) 16%,transparent);border-radius:12px;padding:3px;width:40px;height:36px}
 #tabs svg{width:40px;height:36px;padding:3px}
