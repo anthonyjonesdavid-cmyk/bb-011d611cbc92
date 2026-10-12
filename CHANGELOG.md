@@ -1,4 +1,8 @@
 # Changelog
+## v3.1 — 2026-10-12
+- Play button restyled to blend into the reading bar: transparent with thin outline in theme color (52px); playing state = pause icon + soft accent tint. Text-style play glyph (no emoji rendering).
+- Text panel: gentle one-time hint (dismiss with "Got it") with the iPhone Settings path when no Enhanced/Premium voice is installed; no popups.
+- SW cache yb-v5.
 ## v3 — 2026-10-12
 - Read aloud (Web Speech API, on-device voices): big play/pause button in the reading bar; verse-by-verse with highlight + auto-scroll; tap a verse while playing to jump; optional continue into next chapter.
 - Speeds Slow 0.75 / Gentle 0.9 (default) / Normal 1 / Quick 1.25; voice picker preferring Premium/Enhanced en-US/en-GB; sample button; how-to for downloading better iOS voices.

@@ -68,8 +68,10 @@ mark{background:var(--hl);color:inherit}
 .grid.bk button{font-size:21px;min-height:58px}
 body.night .panel img{filter:brightness(.8)}
 #readnav{align-items:center}
-#readnav #play{flex:none;width:64px;height:64px;border-radius:50%;background:var(--acc);color:var(--bg);font-size:26px;margin:-14px 4px 4px;box-shadow:0 2px 8px rgba(0,0,0,.2);border:3px solid var(--bar)}
-#readnav #play.on{font-size:22px;letter-spacing:-2px}
+#readnav #play{flex:none;width:52px;height:52px;border-radius:50%;background:transparent;color:var(--acc);font-size:20px;margin:0 4px;border:1.5px solid var(--line);transition:background .2s,border-color .2s}
+#readnav #play.on{background:color-mix(in srgb,var(--acc) 12%,transparent);border-color:color-mix(in srgb,var(--acc) 45%,transparent);font-size:17px;letter-spacing:-2px}
+.hint{background:color-mix(in srgb,var(--gold) 12%,transparent);border:1px solid color-mix(in srgb,var(--gold) 35%,transparent);border-radius:12px;padding:10px 12px;margin-top:10px;font-size:16px;color:var(--soft);line-height:1.4}
+.hint button{min-height:44px;color:var(--acc);font-size:16px;text-decoration:underline;padding:0 4px}
 .v.speaking{background:var(--hl);box-shadow:0 0 0 3px var(--hl)}
 select{width:100%;font:inherit;font-size:19px;padding:12px;border-radius:14px;border:2px solid var(--line);background:var(--bar);color:var(--ink);min-height:52px}
 .help{font-size:16px;color:var(--soft);line-height:1.4;margin:8px 2px 0}
