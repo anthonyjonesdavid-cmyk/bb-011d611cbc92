@@ -1,4 +1,10 @@
 # Changelog
+## v3.8 — 2026-10-13
+- Fix: empty band below the tab bar on iPhone Home Screen app. Body was sized with height:100dvh/100vh, which in iOS standalone (black-translucent) is shorter than the screen, so the tab bar ended above the bottom. Body is now pinned with top/right/bottom/left:0 only.
+- Tab bar compacted: buttons 50px, bottom padding = max(safe-area − 4px, 6px); icons sit just above the home-indicator zone.
+- Any area outside the app paints header color at top and tab-bar color at bottom (no cream/translucent strips behind status bar or home indicator).
+- Safe-area insets routed through --sat/--sab CSS vars (testable).
+- SW cache yb-v12.
 ## v3.7 — 2026-10-13
 - Full-screen fill: body is now pinned to the viewport (position:fixed; inset:0; 100dvh/100dvw with 100vh fallback) so the app always covers the whole browser window, including browsers whose toolbars change height (car/tablet browsers); page background behind the app is the page color, not the header brown.
 - Wide screens (≥1100px): bars stay full-bleed with controls centered; reading/home column widened to 900–960px and scaled up (1.22×, 1.45× at ≥1700px) for readable type; larger tab/reading bar; panels scaled.
