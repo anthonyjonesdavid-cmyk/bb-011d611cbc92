@@ -1,4 +1,9 @@
 # Changelog
+## v3.7 — 2026-10-13
+- Full-screen fill: body is now pinned to the viewport (position:fixed; inset:0; 100dvh/100dvw with 100vh fallback) so the app always covers the whole browser window, including browsers whose toolbars change height (car/tablet browsers); page background behind the app is the page color, not the header brown.
+- Wide screens (≥1100px): bars stay full-bleed with controls centered; reading/home column widened to 900–960px and scaled up (1.22×, 1.45× at ≥1700px) for readable type; larger tab/reading bar; panels scaled.
+- Fix: "LORD" in Today's Verse showed struck through.
+- SW cache yb-v11.
 ## v3.6 — 2026-10-12
 - Status bar: switched to black-translucent; the header now paints one flat solid band from the very top of the screen (through the clock area) to its bottom border, same color as <html> background and theme-color.
 - Header colors per theme so white iOS status text stays readable: Light = deep brown (#5b2b26) with cream title/gold icons; Sepia = dark umber (#4d3926); Night = near-black (#171412). Content area themes unchanged.

@@ -2,9 +2,9 @@
 .sepia{--hbar:#4d3926;--hink:#f3e6cc;--hacc:#e6c582;--hline:#3e2d1e;--bg:#f1e3c8;--bar:#e6d3b0;--ink:#3a2c1c;--line:#d4bf98;--hl:#f3d27a}
 .night{--hbar:#171412;--hink:#cdbfae;--hacc:#d9a07f;--hline:#2a2420;--bg:#0e0c0b;--bar:#171412;--ink:#cdbfae;--soft:#857868;--line:#2a2420;--red:#e0806a;--gold:#9c7c3c;--acc:#d9a07f;--hl:#3d3016}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{background:var(--hbar)}
-html,body{margin:0;height:100%;color:var(--ink);font-family:Georgia,"Iowan Old Style","Times New Roman",serif}
-body{background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+html{background:var(--bg)}
+html,body{margin:0;width:100%;height:100%;min-height:100%;color:var(--ink);font-family:Georgia,"Iowan Old Style","Times New Roman",serif}
+body{background:var(--bg);display:flex;flex-direction:column;overflow:hidden;position:fixed;inset:0;height:100vh;height:100dvh;width:100vw;width:100dvw}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;min-height:48px;min-width:48px}
 header#top{flex:none;background:var(--hbar);border-bottom:1px solid var(--hline);padding-top:env(safe-area-inset-top);display:flex;align-items:center;z-index:5}
 header h1{flex:1;color:var(--hink);text-align:center;font-size:21px;margin:0;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -82,3 +82,17 @@ select{width:100%;font:inherit;font-size:19px;padding:12px;border-radius:14px;bo
 #tabs svg{width:40px;height:36px;padding:3px}
 body.typing #tabs{display:none}
 #tabs{position:relative;z-index:25}
+/* wide screens: full-bleed bars, centered controls, larger comfortable type */
+#tabs,#readnav{justify-content:center}
+#tabs button{max-width:180px}
+#readnav button{max-width:260px}
+@media (min-width:1100px){
+  main{padding:28px 40px 40px}
+  #view>.wrap{max-width:900px;zoom:1.22}
+  header h1{font-size:25px}
+  #tabs button{height:64px}#tabs svg{width:46px;height:42px}
+  #readnav button{height:64px;font-size:22px}
+  .panel{max-width:720px;zoom:1.15}
+}
+@media (min-width:1700px){#view>.wrap{max-width:960px;zoom:1.45}}
+s{text-decoration:none;font-size:.82em;letter-spacing:.04em}
